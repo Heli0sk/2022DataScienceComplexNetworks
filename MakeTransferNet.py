@@ -1,18 +1,17 @@
 import pandas as pd
-import numpy as np
 import networkx as nx
 from sklearn.preprocessing import LabelEncoder
 
 le = LabelEncoder()
 
-QD = pd.read_csv('data/bus_no_dupl.csv')
-length = len(QD)
+data = pd.read_csv('data/bus_no_dupl.csv')
+length = len(data)
 
 route = {}
 edges = []
 for item in range(length):
     i = item
-    row1 = QD.iloc[i, :]
+    row1 = data.iloc[i, :]
     name1 = row1.line_name
     list1 = row1.station_name
     list1 = list1.split(',')
@@ -22,7 +21,12 @@ for item in range(length):
 keys = list(route)
 le.fit(keys)
 keys_num = le.transform(keys)
-for i in range(0, length - 1):
+# 获取站点名称与编号之间的对应关系
+mapRes = {}
+for cl in le.classes_:
+    mapRes.update({cl: le.transform([cl])[0]})
+
+for i in range(0, length):
     loc1 = route[keys[i]]
     for j in range(i + 1, length):
         loc2 = route[keys[j]]
