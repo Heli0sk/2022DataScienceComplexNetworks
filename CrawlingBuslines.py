@@ -63,6 +63,10 @@ def get_list_from_file(filename):
     return l
 
 
+def check_dupl(filename, objdata):
+    pass
+
+
 # 获取线路详细信息
 def get_info(city_pinyin, city_hanzi):
     key = '6aeefcc858dc1b239e73d7ab86566edf'
@@ -75,9 +79,11 @@ def get_info(city_pinyin, city_hanzi):
     s = requests.session()
     s.keep_alive = False
 
+    g = open(filename + '.csv', 'r', encoding='gbk', newline='')
     # 爬取详细信息
     with open(filename + '.csv', 'w', encoding='gbk', newline='') as f:
         w = csv.writer(f)
+        rows = csv.reader(g, delimiter=',')
         w.writerow(['line', 'line_name', 'line_path', 'station_location', 'station_name'])
         for keyword in tqdm(line_list):
             if keyword[0:4] == '青岛地铁':
@@ -101,21 +107,28 @@ def get_info(city_pinyin, city_hanzi):
                     station_name.append(j['name'])
                 # print(station_location)
                 # print(station_name)
-                w.writerow([keyword, line_name, line_path, station_location, station_name])
+                flag = True
+                for row in rows:
+                    if line_name == row[1]:
+                        flag = False
+                        print("\nThis route has already existed!")
+                if flag:
+                    w.writerow([keyword, line_name, line_path, station_location, station_name])
             else:
-                print("No Such Route: ", keyword)
+                print("\nNo Such Route: ", keyword)
+            time.sleep(1)
 
 
-# 启动！
 def rebot_start(city_pinyin, city_hanzi):
     print('Get {}\'s data...'.format(city_pinyin))
     # get_station(city_pinyin)
-    # get_line(city_pinyin)
+    get_line(city_pinyin)
     get_info(city_pinyin, city_hanzi)
     print('Done!\n')
 
 
 if __name__ == '__main__':
+    # requests.adapters.DEFAULT_RETRIES = 5
     rebot_start('qingdao', '青岛市')
     # citys = (('qingdao', '青岛市'), ('jinan', '济南市'))
     # for city in citys:
