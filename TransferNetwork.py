@@ -1,9 +1,10 @@
 import pandas as pd
 import networkx as nx
 from sklearn.preprocessing import LabelEncoder
+from MeasureNetwrok import MeasureNetwork
 
 
-def gen_TransNet(score, target):
+def gen_TransNet(score, target, save=False):
     le = LabelEncoder()
 
     data = pd.read_csv(score)
@@ -37,11 +38,30 @@ def gen_TransNet(score, target):
                     edges = edges + [(keys_num[i], keys_num[j])]
                     break
     G = nx.Graph(edges)
-    nx.write_gexf(G, target)
+    if save:
+        save_station_map(mapRes)
+        nx.write_gexf(G, target)
+    return G
+
+
+def save_station_map(inputdata, savepath):
+    stationName = inputdata.keys()
+    stationNum = inputdata.values()
+    newdic = {
+        'stationName': stationName,
+        'stationNum': stationNum
+    }
+    res = pd.DataFrame(newdic, columns=['stationNum', 'stationName'])
+    res.to_csv(savepath, index=False)
 
 
 if __name__ == '__main__':
     transNetPath = 'NetworkFiles/qingdao_bus.gexf'
-    gen_TransNet('data/bus_no_dupl.csv', transNetPath)
+    # graph = gen_TransNet('data/bus_no_dupl.csv', transNetPath, True)
+    graph = nx.read_gexf(transNetPath)
+    print(graph)
+    measure = MeasureNetwork(graph, save=True)
+    print(measure.head())
+
 
 
