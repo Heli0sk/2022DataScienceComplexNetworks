@@ -39,29 +39,32 @@ def gen_TransNet(score, target, save=False):
                     break
     G = nx.Graph(edges)
     if save:
-        save_station_map(mapRes, 'results/stationMap.csv')
+        save_Line_map(mapRes, 'results/LineMap.csv')
         nx.write_gexf(G, target)
     return G
 
 
-def save_station_map(inputdata, savepath):
+def save_Line_map(inputdata, savepath):
     stationName = inputdata.keys()
     stationNum = inputdata.values()
     newdic = {
-        'stationName': stationName,
-        'stationNum': stationNum
+        'LineName': stationName,
+        'LineNum': stationNum
     }
-    res = pd.DataFrame(newdic, columns=['stationNum', 'stationName'])
+    res = pd.DataFrame(newdic, columns=['LineNum', 'LineName'])
     res.to_csv(savepath, index=False)
 
 
 if __name__ == '__main__':
     transNetPath = 'NetworkFiles/qingdao_bus.gexf'
-    # graph = gen_TransNet('data/bus_no_dupl.csv', transNetPath, True)
-    graph = nx.read_gexf(transNetPath)
+    graph = gen_TransNet('data/bus_no_dupl.csv', transNetPath, True)
+    # graph = nx.read_gexf(transNetPath)
     print(graph)
-    measure = MeasureNetwork(graph, save=True)
-    print(measure.head())
+    measure = MeasureNetwork(graph)
+    stationName = pd.read_csv('results/LineMap.csv')
+    res = pd.merge(measure, stationName, on='LineNum')
+    print(res.head())
+    res.to_excel('results/MeasureNetwork.xlsx', index=False)
 
 
 

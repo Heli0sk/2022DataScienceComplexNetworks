@@ -13,7 +13,7 @@ def get_degree(data):
     return res, node
 
 
-def MeasureNetwork(graph, save=False):
+def MeasureNetwork(graph):
     degree, node = get_degree(graph)
     dgr = nx.degree_centrality(graph)
     cluster = nx.clustering(graph)
@@ -28,17 +28,17 @@ def MeasureNetwork(graph, save=False):
         [pd.Series(c) for c in (nodes, degree, cluster, eig, pgr, clo, dgr, bet)],
         axis=1)
 
-    centralities.columns = ("stationNum", "Degree", "Clustering", "Eigenvector", "PageRank", "Closeness",
+    centralities.columns = ("LineNum", "Degree", "Clustering", "Eigenvector", "PageRank", "Closeness",
                             "Degree_C", "Betweenness")
     # centralities["Harmonic Closeness"] /= centralities.shape[0]
-    centralities['stationNum'] = centralities['stationNum'].apply(pd.to_numeric, errors='coerce')
-    res = centralities.sort_values('stationNum', ascending=True)
+    centralities['LineNum'] = centralities['LineNum'].apply(pd.to_numeric, errors='coerce')
+    res = centralities.sort_values('LineNum', ascending=True)
 
-    stationName = pd.read_csv('data/stationMap.csv')
-    res = pd.merge(res, stationName, on='stationNum')
+    # stationName = pd.read_csv('data/LineMap.csv')
+    # res = pd.merge(res, stationName, on='LineNum')
 
-    if save:
-        res.to_excel('results/MeasureNetwork.xlsx', index=False)
+    # if save:
+    #     res.to_excel('results/MeasureNetwork.xlsx', index=False)
     return res
 
 
@@ -46,6 +46,6 @@ if __name__ == '__main__':
     transNetPath = 'NetworkFiles/qingdao_bus.gexf'
     graph = nx.read_gexf(transNetPath)
     print(graph)
-    mea = MeasureNetwork(graph, True)
+    mea = MeasureNetwork(graph)
     print(mea.head())
 
