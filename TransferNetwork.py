@@ -39,7 +39,7 @@ def gen_TransNet(score, target, save=False):
                     break
     G = nx.Graph(edges)
     if save:
-        save_station_map(mapRes)
+        save_station_map(mapRes, 'results/stationMap.csv')
         nx.write_gexf(G, target)
     return G
 
