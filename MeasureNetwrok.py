@@ -1,5 +1,7 @@
 import networkx as nx
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def get_degree(data):
@@ -40,6 +42,35 @@ def MeasureNetwork(graph):
     # if save:
     #     res.to_excel('results/MeasureNetwork.xlsx', index=False)
     return res
+
+
+def degreeDistribution(datapath, savepath, save=False):
+    def normfun(x, mu, sigma):
+        pdf = np.exp(-((x - mu) ** 2) / (2 * sigma ** 2)) / (sigma * np.sqrt(2 * np.pi))
+        return pdf
+
+    measure = pd.read_excel(datapath)
+
+    lst = measure['Degree'].values.tolist()
+    res = dict(zip(*np.unique(lst, return_counts=True)))
+
+    x = np.unique(lst, return_counts=True)[0]
+    y = np.unique(lst, return_counts=True)[1]
+
+    mean = y.mean()
+    std = x.std()
+    y_ = normfun(x, mean, std)
+    bias = 1000
+    plt.plot(x, y_ * bias, color='red')
+    plt.bar(x, y, color='blue')
+
+    # 设置图表参数
+    plt.xlabel('Degreee', fontsize=15, color='black')  # 设置x轴标签
+    plt.ylabel('Frequency', fontsize=15, color='black')  # 设置y轴标签
+
+    if save:
+        plt.savefig(savepath)
+    plt.show()
 
 
 if __name__ == '__main__':
