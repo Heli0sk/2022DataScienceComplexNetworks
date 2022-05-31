@@ -33,8 +33,8 @@ def gen_StationNet(score, target, save=False):
     res.to_csv('results/StationMap.csv', index=False)
 
     for i in range(1, len(keys_num)):
-        # if [keys_num[i], keys_num[i-1]] not in edges:
-        edges += [(keys_num[i], keys_num[i-1])]
+        if ([keys_num[i], keys_num[i-1]]) not in edges:
+            edges += [(keys_num[i], keys_num[i-1])]
     G = nx.Graph(edges)
     if save:
         # save_Line_map(mapRes, 'results/StationMap.csv')
@@ -44,7 +44,7 @@ def gen_StationNet(score, target, save=False):
 
 if __name__ == '__main__':
     transNetPath = 'NetworkFiles/stationGraph.gexf'
-    graph = gen_StationNet('data/bus_no_dupl.csv', transNetPath, True)
+    graph = gen_StationNet('data/bus_no_dupl.csv', transNetPath, False)
     # graph = nx.read_gexf(transNetPath)
     print(graph)
     # measure = MeasureNetwork(graph)
