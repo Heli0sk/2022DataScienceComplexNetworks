@@ -44,8 +44,8 @@ def gen_StationNet(score, target, save=False):
 
 if __name__ == '__main__':
     transNetPath = 'NetworkFiles/stationGraph.gexf'
-    graph = gen_StationNet('data/bus_no_dupl.csv', transNetPath, False)
-    # graph = nx.read_gexf(transNetPath)
+    # graph = gen_StationNet('data/bus_no_dupl.csv', transNetPath, False)
+    graph = nx.read_gexf(transNetPath)
     print(graph)
     # measure = MeasureNetwork(graph)
     # stationName = pd.read_csv('results/LineMap.csv')

@@ -30,17 +30,18 @@ def MeasureNetwork(graph):
         [pd.Series(c) for c in (nodes, degree, cluster, eig, pgr, clo, dgr, bet)],
         axis=1)
 
-    centralities.columns = ("LineNum", "Degree", "Clustering", "Eigenvector", "PageRank", "Closeness",
+    centralities.columns = ("StationNum", "Degree", "Clustering", "Eigenvector", "PageRank", "Closeness",
                             "Degree_C", "Betweenness")
     # centralities["Harmonic Closeness"] /= centralities.shape[0]
-    centralities['LineNum'] = centralities['LineNum'].apply(pd.to_numeric, errors='coerce')
-    res = centralities.sort_values('LineNum', ascending=True)
+    centralities['StationNum'] = centralities['StationNum'].apply(pd.to_numeric, errors='coerce')
+    res = centralities.sort_values('StationNum', ascending=True)
 
-    # stationName = pd.read_csv('data/LineMap.csv')
-    # res = pd.merge(res, stationName, on='LineNum')
+    stationName = pd.read_csv('results/stationMap.csv')
+    res = pd.merge(res, stationName, on='StationNum')
+    res.to_excel('results/MeasureNetwork_Line.xlsx', index=False)
 
     # if save:
-    #     res.to_excel('results/MeasureNetwork.xlsx', index=False)
+    #     res.to_excel('results/MeasureNetwork_Station.xlsx', index=False)
     return res
 
 
@@ -74,7 +75,7 @@ def degreeDistribution(datapath, savepath, save=False):
 
 
 if __name__ == '__main__':
-    transNetPath = 'NetworkFiles/qingdao_bus.gexf'
+    transNetPath = 'NetworkFiles/LineGraph.gexf'
     graph = nx.read_gexf(transNetPath)
     print(graph)
     mea = MeasureNetwork(graph)
